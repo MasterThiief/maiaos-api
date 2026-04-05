@@ -55,6 +55,14 @@ chatClient.onMessage(async (channel, userName, text, msg) => {
     } catch { /* silencioso */ }
   }
 
+  // Serializa emoteOffsets: { emoteId -> [posições] }
+  const emotes = {}
+  if (msg.emoteOffsets?.size) {
+    for (const [emoteId, positions] of msg.emoteOffsets) {
+      emotes[emoteId] = positions // ex: { '425618': [[0,2], [10,12]] }
+    }
+  }
+
   io.emit('chat-message', {
     id:       msg.id,
     username: msg.userInfo.displayName,
@@ -63,6 +71,7 @@ chatClient.onMessage(async (channel, userName, text, msg) => {
     isMod:    msg.userInfo.isMod,
     isSub:    msg.userInfo.isSubscriber,
     avatarUrl,
+    emotes,   // [NOVO]
   })
 })
 
