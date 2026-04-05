@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      dbName: process.env.MONGODB_DB, // ← aqui
+      dbName: process.env.MONGODB_DB,
     })
     console.log(`[DB] Conectado ao Atlas — banco: ${process.env.MONGODB_DB}`)
   } catch (err) {

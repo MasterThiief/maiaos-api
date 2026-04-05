@@ -55,7 +55,7 @@ chatClient.onMessage(async (channel, userName, text, msg) => {
     } catch { /* silencioso */ }
   }
 
-  // Serializa emoteOffsets: { emoteId -> [posições] }
+  // Serializa emoteOffsets:{ emoteId -> [posições] }
   const emotes = {}
   if (msg.emoteOffsets?.size) {
     for (const [emoteId, positions] of msg.emoteOffsets) {
