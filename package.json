@@ -1,0 +1,22 @@
+{
+  "name": "maiaos-api",
+  "version": "1.0.0",
+  "description": "MaiaOS BFF — ponte entre MongoDB Atlas e o site",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@twurple/auth": "^8.1.3",
+    "@twurple/chat": "^8.1.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.4",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
