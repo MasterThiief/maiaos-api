@@ -17,6 +17,7 @@ const GAME_CONFIG = {
 // ── POST /api/jogos/jogar ─────────────────────────────────────────────────────
 router.post('/jogar', async (req, res) => {
   const { twitchId, jogo, aposta, opcao } = req.body
+  console.log('[Jogos] twitchId recebido:', twitchId)
 
   // Validação básica
   if (!twitchId || !jogo || !aposta || !opcao) {
@@ -36,6 +37,7 @@ router.post('/jogar', async (req, res) => {
 
   try {
     const user = await User.findOne({ twitchId })
+    console.log('[Jogos] user encontrado:', user ? user.displayName : 'NULL')
     if (!user) return res.status(404).json({ error: 'Usuário não encontrado.' })
 
     // Valida saldo
