@@ -13,6 +13,8 @@ const rankingRoutes = require('./routes/ranking')
 const lojaRoutes    = require('./routes/loja')
 const emojiRoutes   = require('./routes/emojis')
 const jogosRoutes = require('./routes/jogos')
+const { router: pushRoutes } = require('./routes/push')
+const eventsubRoutes         = require('./routes/eventsub')
 
 const app        = express()
 const httpServer = createServer(app)
@@ -87,6 +89,9 @@ app.use(cors({
   origin:  process.env.CORS_ORIGIN || 'http://localhost:5173',
   methods: ['GET', 'POST'],
 }))
+// ── EventSub ANTES do express.json() — precisa do body raw ───────────────────
+app.use('/api/eventsub', eventsubRoutes)
+// ── express.json() para todas as outras rotas ─────────────────────────────────
 app.use(express.json())
 
 // ── Health check ─────────────────────────────────────────────────────────────
@@ -95,6 +100,7 @@ app.get('/health', (req, res) => {
 })
 
 // ── Rotas ────────────────────────────────────────────────────────────────────
+app.use('/api/push',    pushRoutes)
 app.use('/api/user',    userRoutes)
 app.use('/api/ranking', rankingRoutes)
 app.use('/api/loja',    lojaRoutes)
@@ -118,5 +124,8 @@ connectDB().then(() => {
     console.log(`  GET  /api/loja/items`)
     console.log(`  POST /api/loja/comprar`)
     console.log(`  POST /api/jogos/jogar`)
+    console.log(`  POST /api/push/subscribe`)
+    console.log(`  POST /api/push/unsubscribe`)
+    console.log(`  POST /api/eventsub`)
   })
 })
