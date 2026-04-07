@@ -12,6 +12,7 @@ const userRoutes    = require('./routes/user')
 const rankingRoutes = require('./routes/ranking')
 const lojaRoutes    = require('./routes/loja')
 const emojiRoutes   = require('./routes/emojis')
+const jogosRoutes = require('./routes/jogos')
 
 const app        = express()
 const httpServer = createServer(app)
@@ -98,6 +99,7 @@ app.use('/api/user',    userRoutes)
 app.use('/api/ranking', rankingRoutes)
 app.use('/api/loja',    lojaRoutes)
 app.use('/api/emojis',  emojiRoutes)
+app.use('/api/jogos', jogosRoutes)
 
 // ── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {
@@ -115,5 +117,6 @@ connectDB().then(() => {
     console.log(`  GET  /api/ranking`)
     console.log(`  GET  /api/loja/items`)
     console.log(`  POST /api/loja/comprar`)
+    console.log(`  POST /api/jogos/jogar`)
   })
 })
