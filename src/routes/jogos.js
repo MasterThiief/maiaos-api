@@ -19,16 +19,16 @@ async function isFollower(twitchId) {
   try {
     const res = await fetch(
       `https://api.twitch.tv/helix/channels/followers?broadcaster_id=${process.env.BROADCASTER_ID}&user_id=${twitchId}`,
-      {
-        headers: {
-          'Client-Id':     process.env.TWITCH_CLIENT_ID,
-          'Authorization': `Bearer ${process.env.TWITCH_ACCESS_TOKEN}`,
-        }
-      }
+      { headers: {
+        'Client-Id':     process.env.TWITCH_CLIENT_ID,
+        'Authorization': `Bearer ${process.env.TWITCH_ACCESS_TOKEN}`,
+      }}
     )
     const data = await res.json()
+    console.log('[isFollower] status:', res.status, 'data:', JSON.stringify(data))
     return (data.total ?? 0) > 0
-  } catch {
+  } catch (e) {
+    console.error('[isFollower] erro:', e.message)
     return false
   }
 }
