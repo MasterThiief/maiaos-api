@@ -56,4 +56,20 @@ async function notifyAll(payload) {
   return { sent, failed }
 }
 
+// ── POST /api/push/test — dispara push de teste ───────────────────────────────
+router.post('/test', async (req, res) => {
+  try {
+    const result = await notifyAll({
+      title: '📺 Teste — O Maxter está ao vivo!',
+      body:  'Isso é um teste de notificação. A live começou!',
+      url:   'https://maxterlabs.pages.dev',
+      icon:  '/logo-maiaos.png',
+    })
+    res.json({ ok: true, ...result })
+  } catch (e) {
+    console.error('[Push/test]', e)
+    res.status(500).json({ ok: false, error: e.message })
+  }
+})
+
 module.exports = { router, notifyAll }
