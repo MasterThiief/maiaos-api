@@ -14,7 +14,8 @@ const lojaRoutes    = require('./routes/loja')
 const emojiRoutes   = require('./routes/emojis')
 const jogosRoutes = require('./routes/jogos')
 const { router: pushRoutes } = require('./routes/push')
-const eventsubRoutes         = require('./routes/eventsub')
+const eventsubRoutes = require('./routes/eventsub')
+const cmdRoutes = require('./routes/cmd')
 
 const app        = express()
 const httpServer = createServer(app)
@@ -26,6 +27,48 @@ const io = new Server(httpServer, {
     origin:  process.env.CORS_ORIGIN || 'http://localhost:5173',
     methods: ['GET', 'POST'],
   }
+})
+
+// ── Socket.IO handlers ───────────────────────────────────────────────────────
+io.on('connection', (socket) => {
+  socket.on('get-twitch-emotes', async () => {
+    try {
+      const map = {}
+
+      // Emotes globais
+      const globalRes = await fetch('https://api.twitch.tv/helix/chat/emotes/global', {
+        headers: {
+          'Client-Id':     process.env.TWITCH_CLIENT_ID,
+          'Authorization': `Bearer ${process.env.TWITCH_ACCESS_TOKEN}`,
+        }
+      })
+      const globalData = await globalRes.json()
+      for (const e of globalData.data ?? []) {
+        map[e.name] = e.images?.url_2x ?? e.images?.url_1x
+      }
+
+      // Emotes do canal
+      const channelRes = await fetch(
+        `https://api.twitch.tv/helix/chat/emotes?broadcaster_id=${process.env.BROADCASTER_ID}`,
+        {
+          headers: {
+            'Client-Id':     process.env.TWITCH_CLIENT_ID,
+            'Authorization': `Bearer ${process.env.TWITCH_ACCESS_TOKEN}`,
+          }
+        }
+      )
+      const channelData = await channelRes.json()
+      for (const e of channelData.data ?? []) {
+        map[e.name] = e.images?.url_2x ?? e.images?.url_1x
+      }
+
+      console.log(`[Emotes] enviando ${Object.keys(map).length} emotes`)
+      socket.emit('twitch-emotes-data', map)
+    } catch (e) {
+      console.error('[Emotes] erro:', e.message)
+      socket.emit('twitch-emotes-data', {})
+    }
+  })
 })
 
 // ── Cache de avatares em memória (limpa a cada 6h) ───────────────────────────
@@ -106,6 +149,7 @@ app.use('/api/ranking', rankingRoutes)
 app.use('/api/loja',    lojaRoutes)
 app.use('/api/emojis',  emojiRoutes)
 app.use('/api/jogos', jogosRoutes)
+app.use('/api/cmd', cmdRoutes)
 
 // ── 404 ──────────────────────────────────────────────────────────────────────
 app.use((req, res) => {
@@ -127,5 +171,8 @@ connectDB().then(() => {
     console.log(`  POST /api/push/subscribe`)
     console.log(`  POST /api/push/unsubscribe`)
     console.log(`  POST /api/eventsub`)
+    console.log(` POST /api/cmd/redeem`)
+    console.log(` POST /api/cmd/setcode`)
+    console.log(` POST /api/cmd/revoke`)
   })
 })

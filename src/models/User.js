@@ -9,6 +9,7 @@ const UserSchema = new Schema({
   visits:           { type: Number,  default: 0 },
   lastSeen:         Date,
   firstSeen:        Date,
+  lastTerminalVisit: { type: Date, default: null },
   tags:             [String],
   memorableMessages:[String],
   insideJokes:      [String],
